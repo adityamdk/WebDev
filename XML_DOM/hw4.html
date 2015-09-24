@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+    <title> Cable Data Parser  </title>
+ 
+ </head>
+
+<body style="text-align:center">
+
+        <p> Enter URL for company List XML File </p>
+		<form name="myform"  id="cable">
+            
+        <input type="text" size="100" name="URL"> <br>
+		
+        <input type="button" value="Submit Query" onclick="xmlParser(this.form)">
+    
+    </form>
+	
+<div>    	
+<!--</body>-->
+</div>
+	        
+<script>
+
+
+function printTable(xmlResponse)
+{
+    
+	var finalTable = "<head><title>Parser Result</title></head><body><table border=2 width=100%><tr>";
+
+    var HeaderData = xmlResponse.getElementsByTagName("Header").item(0).childNodes;    
+    
+	var HeaderDataCount = HeaderData.length;
+    
+	
+    for(var i = 0;i<HeaderDataCount;i++)
+    {        
+			var textNodes;
+			
+               if(HeaderData[i].nodeType == 1 && HeaderData[i].nodeName == "Data")
+				{
+				
+					textNodes = HeaderData[i].firstChild;
+					
+					finalTable+="<th>"+textNodes.nodeValue+"</th>";                        
+				
+				}     
+    }
+	
+            finalTable += "</tr>";
+    
+			var RowData = xmlResponse.getElementsByTagName("Row");
+			
+			var NoRowDataFlag = 0;
+			
+			for(var i = 0;i<RowData.length;i++)
+			{
+				if((RowData[i].nodeType == 1) && (RowData[i].nodeName == "Row"))
+				{
+					
+					    NoRowDataFlag = 1;
+					
+					finalTable+= "<tr>";
+					
+					var rowNodes = RowData[i].childNodes;
+					
+					for(var index1 =0;index1<rowNodes.length;index1++)
+					{
+						
+						if((rowNodes[index1].nodeType == 1) && (rowNodes[index1].nodeName == "Network"))
+						 {
+							 
+							 finalTable+= "<td>";
+							 var Networkdata = rowNodes[index1].firstChild;
+							 
+						
+						finalTable+= ""+Networkdata.nodeValue+"</td>";
+							 
+							
+						 }
+						
+						if((rowNodes[index1].nodeType == 1) && (rowNodes[index1].nodeName == "Owner") )
+						 {
+						
+						finalTable+= "<td>";
+							 var OwnerData = rowNodes[index1].firstChild;
+							 finalTable+= ""+OwnerData.nodeValue+"</td>";
+
+							 }
+						
+                        
+						if((rowNodes[index1].nodeType == 1) && (rowNodes[index1].nodeName == "Feeds"))
+						{
+							
+							finalTable+= "<td><ul>";
+
+							var feedChild = rowNodes[index1].getElementsByTagName("Feed");
+                            
+							
+							for(var fix =0;fix<feedChild.length;fix++)
+							{                        
+						    
+                                if(!(/^\s*$/.test(feedChild[fix].firstChild.nodeValue)) )
+                                {
+                               
+                                  finalTable+="<li>"+feedChild[fix].firstChild.nodeValue+"</li>";
+                                }
+
+							}
+							
+							
+						finalTable+="</ul></td>";
+
+						}
+						
+                        if((rowNodes[index1].nodeType == 1) && (rowNodes[index1].nodeName == "Notes"))
+						 {
+
+						 finalTable+= "<td>";
+
+						 var NotesData = rowNodes[index1].firstChild;
+
+						 finalTable+= ""+NotesData.nodeValue+"</td>";
+
+						 
+
+						 }
+						
+                        if((rowNodes[index1].nodeType == 1)&&(rowNodes[index1].nodeName == "HomePage"))
+						{
+						
+
+						var HomeData = rowNodes[index1].firstChild;
+
+							finalTable+="<td><a href="+""+HomeData.nodeValue+">"+HomeData.nodeValue+"</a></td>";
+												
+						}
+						
+                        if((rowNodes[index1].nodeType == 1) && (rowNodes[index1].nodeName == "Logo"))
+						{
+						
+							finalTable+= "<td>"+"<img src="+rowNodes[index1].firstChild.nodeValue+">"+"</td>";                    
+
+							}
+					}
+					
+					    finalTable+="</tr>";
+				}
+				else
+				{
+				
+					continue;
+				
+				}
+			
+				
+			}
+			
+			
+    if(NoRowDataFlag == 0)
+    {
+        
+		alert("ERROR IN XML DATA");return;
+		
+    }
+	
+    finalTable+="</tr></table></body>";        
+    
+	tableFinalOut = window.open("","Table","width=1200,height=800,scrollbars=yes");
+    
+	tableFinalOut.document.write(finalTable);
+    tableFinalOut.document.close();
+	}
+
+
+
+function xmlParser(formData)
+{ 
+  
+ // var id = document.getElementsByName("URL")[0].value;
+    var id =  formData.URL.value;
+   // var id = formData;
+	if(id.length == 0)
+    {
+	
+			alert("ERROR:TEXT BOX IS EMPTY!!!");return;
+    
+	}
+    
+	if(window.XMLHttpRequest)
+    {
+	
+			xmlHttpRequestObject = new XMLHttpRequest();
+    
+	}
+    else
+    {
+			xmlHttpRequestObject = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+	
+    try
+	{
+			
+			xmlHttpRequestObject.open("GET",id,false);
+			
+			xmlHttpRequestObject.send();
+			
+			xmlResponse = xmlHttpRequestObject.responseXML;
+    
+	}
+	catch(err)
+    {
+	
+        alert("ERROR :FILENAME ENTERED DOES NOT EXIST ");return;
+    
+	}
+				if((xmlHttpRequestObject.status == 404) || (!xmlResponse))
+				{
+				
+							alert("ERROR : FLE NOT FOUND!!!");return;
+				
+				}
+				
+				if(xmlResponse.documentElement.nodeName == "parsererror")
+				{
+				
+							alert("Error in xml File");return;
+				
+				}
+				
+				
+
+    printTable(xmlResponse);
+	
+	
+	
+	
+	
+	
+	
+}
+ </script>
+
+
+
+
+
+</html>
