@@ -1,0 +1,13 @@
+Homework: XML Exercise
+1. Objectives
+? Become familiar with the DOM paradigm;
+? Use an existing XML parser;
+? Transform the content of an XML document into an HTML page.
+2. Description
+You are required to write a HTML/JavaScript program, which takes the URL of an XML document containing Cable Network company information, parses the XML file, and extracts the list of cable networks, displaying them in a table. The JavaScript program will be embedded in an HTML file so that it can be executed within a browser.
+? Your program should display a text box to enter the XML file name as shown below on Figure 1. On clicking the “Submit Query” button, your program should display the table as shown below, Figure 2. If the text box is left empty and Submit Query is clicked, an appropriate error message must be shown.
+? Once the XML file downloads, a JavaScript function within the HTML file parses the XML document that was passed as an input to the popped up window.
+2
+? After parsing the XML document, a table should be displayed consisting of the data for all Cable Networks companies that are contained in the XML file. 
+
+Please Use FireFox browser for testing the file.
